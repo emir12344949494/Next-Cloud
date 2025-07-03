@@ -16,8 +16,6 @@ services:
     image: nextcloud
     container_name: nextcloud-app
     restart: always
-    ports:
-      - 8080:80
     depends_on:
       - mariadb
     user: "1000:100"
@@ -29,3 +27,15 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=mariadb
+
+  nginx:
+    image: nginx:latest
+    container_name: nextcloud-nginx
+    restart: always
+    depends_on:
+      - nextcloud
+    ports:
+      - "443:443"
+    volumes:
+      - /srv/dev-disk-by-uuid-bf0a7f1d-ca0d-4971-b0ad-32b37e78c779/principal/certs:/etc/nginx/certs:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
